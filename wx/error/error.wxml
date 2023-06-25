@@ -1,0 +1,3 @@
+<view class="back bk" bindtap="goback">
+    返回首页
+</view>
