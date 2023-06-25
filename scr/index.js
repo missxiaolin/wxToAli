@@ -67,22 +67,48 @@ export class Wx2Ant {
     if (typeof src == 'string') {
         if (fs.lstatSync(src).isDirectory()) { // 文件夹
             // 读取文件夹的下的文件
-            fs.readdir(src, (err, files) => {
-                files.forEach(filename => {
-                    //获取当前文件的绝对路径
-                    const filedir = path.join(src, filename);
-                    // 继续遍历知道拿到文件为止
-                    this.HandleFile(filedir)
-                })
+            let files = fs.readdirSync(src)
+            files.forEach(filename => {
+                //获取当前文件的绝对路径
+                const filedir = path.join(src, filename);
+                // 继续遍历知道拿到文件为止
+                this.HandleFile(filedir)
             })
         }
-        if (fs.lstatSync(src).isFile()) { // 文件
-            console.log('文件', src)
+        if (this.isValid(src) && fs.lstatSync(src).isFile()) { // 文件
+            let order = this.order
+            switch (order) {
+                case this.UPDATAANDCOPY:
+                    break
+                case this.DELETEFILE:
+                    break
+                case this.UPDATESUFFIX:
+                    break
+                case this.WX2ANT:
+                    break
+                default:
+                    console.error("没有该种处理文件的方式");
+					break;
+            }
+            
+            // let data = fs.readFileSync('./test.txt', 'utf-8');
         }
     }
-    
-    
-    
+  }
+
+  /**
+   * 判断是否是需要转换的文件
+   * @param {*} f 
+   * @returns 
+   */
+  isValid(f) {
+    let suffix = this.suffix
+    for (let i = 0; i < suffix.length; i++) {
+        if (f.indexOf(`.${suffix[i]}`) != -1) {
+            return true;
+        }
+    }
+    return false
   }
 
   /**
