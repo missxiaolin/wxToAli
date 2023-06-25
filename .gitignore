@@ -1,0 +1,8 @@
+.idea/
+.DS_Store
+project.private.config.json
+node_modules
+projectmaps
+.cloudbase/container/debug.json
+miniprogram_npm
+
