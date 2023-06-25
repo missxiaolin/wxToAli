@@ -1,6 +1,6 @@
 import { DIR, JSmethod, JS, AXML, JSON } from "./config/index";
-const fs = require("fs")
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 export class Wx2Ant {
   constructor(options) {
@@ -44,12 +44,12 @@ export class Wx2Ant {
     this.setOrder(this.UPDATESUFFIX);
     this.HandleFile(this.dir);
     this.clearSuffix();
-    this.addUpdateSuffix(".axml", '');
-    this.addUpdateSuffix(".acss", '');
-    this.addUpdateSuffix(".json", '');
+    this.addUpdateSuffix(".axml", "");
+    this.addUpdateSuffix(".acss", "");
+    this.addUpdateSuffix(".json", "");
     // 动作
     this.setOrder(this.WX2ANT);
-    // this.HandleFile(this.dir);
+    this.HandleFile(this.dir);
   }
 
   clearSuffix() {
@@ -59,93 +59,121 @@ export class Wx2Ant {
 
   /**
    * 主要逻辑执行
-   * @param {*} src 
+   * @param {*} src
    */
   HandleFile(src) {
     let _this = this,
-        f = null
-    if (typeof src == 'string') {
-        if (fs.lstatSync(src).isDirectory()) { // 文件夹
-            // 读取文件夹的下的文件
-            let files = fs.readdirSync(src)
-            files.forEach(filename => {
-                //获取当前文件的绝对路径
-                const filedir = path.join(src, filename);
-                // 继续遍历知道拿到文件为止
-                this.HandleFile(filedir)
-            })
+      f = null;
+    if (typeof src == "string") {
+      if (fs.lstatSync(src).isDirectory()) {
+        // 文件夹
+        // 读取文件夹的下的文件
+        let files = fs.readdirSync(src);
+        files.forEach((filename) => {
+          //获取当前文件的绝对路径
+          const filedir = path.join(src, filename);
+          // 继续遍历知道拿到文件为止
+          this.HandleFile(filedir);
+        });
+      }
+      if (this.isValid(src) != -1 && fs.lstatSync(src).isFile()) {
+        // 文件
+        let order = this.order;
+        switch (order) {
+          case this.UPDATAANDCOPY:
+            this.updataAndCopy(src);
+            break;
+          case this.DELETEFILE:
+            this.deleteFile(src);
+            break;
+          case this.UPDATESUFFIX:
+            this.updataSuffix(src);
+            break;
+          case this.WX2ANT:
+            this.WX2ANT(src)
+            break;
+          default:
+            console.error("没有该种处理文件的方式");
+            break;
         }
-        if (this.isValid(src) != -1 && fs.lstatSync(src).isFile()) { // 文件
-            let order = this.order
-            switch (order) {
-                case this.UPDATAANDCOPY:
-                    this.updataAndCopy(src);
-                    break
-                case this.DELETEFILE:
-                    break
-                case this.UPDATESUFFIX:
-                    this.updataSuffix(src)
-                    break
-                case this.WX2ANT:
-                    break
-                default:
-                    console.error("没有该种处理文件的方式");
-					break;
-            }
-            
-            // let data = fs.readFileSync('./test.txt', 'utf-8');
-        }
+
+        // let data = fs.readFileSync('./test.txt', 'utf-8');
+      }
     }
   }
 
   /**
    * 判断是否是需要转换的文件
-   * @param {*} f 
-   * @returns 
+   * @param {*} f
+   * @returns
    */
   isValid(f) {
-    let suffix = this.suffix
+    let suffix = this.suffix;
     for (let i = 0; i < suffix.length; i++) {
-        if (f.indexOf(`.${suffix[i]}`) != -1) {
-            return i;
-        }
+      if (f.indexOf(`.${suffix[i]}`) != -1) {
+        return i;
+      }
     }
-    return -1
+    return -1;
+  }
+
+  /**
+   * 删除指定后缀的文件 e.g. addUpdateSuffix("abc.xml")将会删除指定目录下所有的abc.xml
+   * @param {*} f
+   */
+  deleteFile(f) {
+    let index = this.isValid(f);
+    let r = `\.${this.suffix[index]}$`;
+    let reg = new RegExp(r);
+    let newFilename = f.replace(reg, `.${this.toSuffix[index]}`);
+    try {
+      fs.unlinkSync(f, newFilename);
+    } catch (e) {
+      console.error("文件删除出错：" + e);
+    }
   }
 
   /**
    * 将符合后缀的文件copy和修改后缀名为指定的后缀。e.g.
    * addUpdateSuffix(".wxml",".axml");将会copy指定目录下所有的.wxml后缀的文件为.axml后缀的文件
-   * @param {*} f 
+   * @param {*} f
    */
   updataAndCopy(f) {
     let index = this.isValid(f);
-    let r = `\.${this.suffix[index]}$`
-    let reg = new RegExp(r)
+    let r = `\.${this.suffix[index]}$`;
+    let reg = new RegExp(r);
     let newFilename = f.replace(reg, `.${this.toSuffix[index]}`);
     try {
-        fs.copyFileSync(f, newFilename)
-    } catch(e) {
-        console.error("文件复制出错：" + e);
+      fs.copyFileSync(f, newFilename);
+    } catch (e) {
+      console.error("文件复制出错：" + e);
     }
   }
 
   /**
    * 将符合后缀的文件替换为指定的后缀 e.g.
    * addUpdateSuffix(".wxml",".axml");将会修改指定目录下所有的.wxml为.axml
-   * @param {*} f 
+   * @param {*} f
    */
   updataSuffix(f) {
     let index = this.isValid(f);
-    let r = `\.${this.suffix[index]}$`
-    let reg = new RegExp(r)
+    let r = `\.${this.suffix[index]}$`;
+    let reg = new RegExp(r);
     let newFilename = f.replace(reg, `.${this.toSuffix[index]}`);
     try {
-        // 文件重命名
-        fs.renameSync(f, newFilename)
-    } catch(e) {
-        console.error("文件修改后缀名出错：" + newFilename + "--" + e);
+      // 文件重命名
+      fs.renameSync(f, newFilename);
+    } catch (e) {
+      console.error("文件修改后缀名出错：" + newFilename + "--" + e);
     }
+  }
+
+  /**
+   * 主要逻辑
+   * @param {*} f 
+   */
+  WX2ANT(f) {
+    
   }
 
   /**
