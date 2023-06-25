@@ -75,14 +75,16 @@ export class Wx2Ant {
                 this.HandleFile(filedir)
             })
         }
-        if (this.isValid(src) && fs.lstatSync(src).isFile()) { // 文件
+        if (this.isValid(src) != -1 && fs.lstatSync(src).isFile()) { // 文件
             let order = this.order
             switch (order) {
                 case this.UPDATAANDCOPY:
+                    this.updataAndCopy(src);
                     break
                 case this.DELETEFILE:
                     break
                 case this.UPDATESUFFIX:
+                    this.updataSuffix(src)
                     break
                 case this.WX2ANT:
                     break
@@ -105,10 +107,37 @@ export class Wx2Ant {
     let suffix = this.suffix
     for (let i = 0; i < suffix.length; i++) {
         if (f.indexOf(`.${suffix[i]}`) != -1) {
-            return true;
+            return i;
         }
     }
-    return false
+    return -1
+  }
+
+  /**
+   * 将符合后缀的文件copy和修改后缀名为指定的后缀。e.g.
+   * addUpdateSuffix(".wxml",".axml");将会copy指定目录下所有的.wxml后缀的文件为.axml后缀的文件
+   * @param {*} f 
+   */
+  updataAndCopy(f) {
+    let index = this.isValid(f);
+    console.log(index)
+  }
+
+  /**
+   * 将符合后缀的文件替换为指定的后缀 e.g.
+   * addUpdateSuffix(".wxml",".axml");将会修改指定目录下所有的.wxml为.axml
+   * @param {*} f 
+   */
+  updataSuffix(f) {
+    let index = this.isValid(f);
+    let r = `\.${this.suffix[index]}$`
+    let reg = new RegExp(r)
+    let newFilename = f.replace(reg, `.${this.toSuffix[index]}`);
+    try {
+        fs.renameSync(f, newFilename)
+    } catch(e) {
+        console.error("文件修改后缀名出错：" + newFilename + "--" + e);
+    }
   }
 
   /**
