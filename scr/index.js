@@ -1,4 +1,7 @@
 import { DIR, JSmethod, JS, AXML, JSON } from "./config/index";
+const fs = require("fs")
+const path = require('path');
+
 export class Wx2Ant {
   constructor(options) {
     this.suffix = [];
@@ -46,15 +49,41 @@ export class Wx2Ant {
     this.addUpdateSuffix(".json", '');
     // 动作
     this.setOrder(this.WX2ANT);
-    this.HandleFile(us.dir);
+    // this.HandleFile(this.dir);
   }
 
   clearSuffix() {
-    this.suffix.clear();
-    this.toSuffix.clear();
+    this.suffix = [];
+    this.toSuffix = [];
   }
 
-  HandleFile(src) {}
+  /**
+   * 主要逻辑执行
+   * @param {*} src 
+   */
+  HandleFile(src) {
+    let _this = this,
+        f = null
+    if (typeof src == 'string') {
+        if (fs.lstatSync(src).isDirectory()) { // 文件夹
+            // 读取文件夹的下的文件
+            fs.readdir(src, (err, files) => {
+                files.forEach(filename => {
+                    //获取当前文件的绝对路径
+                    const filedir = path.join(src, filename);
+                    // 继续遍历知道拿到文件为止
+                    this.HandleFile(filedir)
+                })
+            })
+        }
+        if (fs.lstatSync(src).isFile()) { // 文件
+            console.log('文件', src)
+        }
+    }
+    
+    
+    
+  }
 
   /**
    * 设置

@@ -1,5 +1,5 @@
 // 目录
-const DIR = "/Users/xiaolin/web/monster-client-app"
+const DIR = "/Users/xiaolin/web/miss/wxToAli/wx/error"
 
 // js函数名的替换
 const JSmethod = [
