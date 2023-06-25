@@ -120,7 +120,14 @@ export class Wx2Ant {
    */
   updataAndCopy(f) {
     let index = this.isValid(f);
-    console.log(index)
+    let r = `\.${this.suffix[index]}$`
+    let reg = new RegExp(r)
+    let newFilename = f.replace(reg, `.${this.toSuffix[index]}`);
+    try {
+        fs.copyFileSync(f, newFilename)
+    } catch(e) {
+        console.error("文件复制出错：" + e);
+    }
   }
 
   /**
@@ -134,6 +141,7 @@ export class Wx2Ant {
     let reg = new RegExp(r)
     let newFilename = f.replace(reg, `.${this.toSuffix[index]}`);
     try {
+        // 文件重命名
         fs.renameSync(f, newFilename)
     } catch(e) {
         console.error("文件修改后缀名出错：" + newFilename + "--" + e);
