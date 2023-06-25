@@ -36,7 +36,7 @@ export class Wx2Ant {
      * addUpdateMethods("request","httpRequest") 将request转换成httpRequest
      * axml文件主要进行 属性名称的修改，即'wx:'-->'a:'
      */
-    this.WX2ANT = 4;
+    this.WX2ANTEXECUTE = 4;
     // 导入配置
     this.readConfig();
     this.addUpdateSuffix("wxml", "axml"); // 这边的order是UPDATESUFFIX 所以是修改后缀名
@@ -48,7 +48,7 @@ export class Wx2Ant {
     this.addUpdateSuffix(".acss", "");
     this.addUpdateSuffix(".json", "");
     // 动作
-    this.setOrder(this.WX2ANT);
+    this.setOrder(this.WX2ANTEXECUTE);
     this.HandleFile(this.dir);
   }
 
@@ -64,41 +64,43 @@ export class Wx2Ant {
   HandleFile(src) {
     let _this = this,
       f = null;
-    if (typeof src == "string") {
-      if (fs.lstatSync(src).isDirectory()) {
-        // 文件夹
-        // 读取文件夹的下的文件
-        let files = fs.readdirSync(src);
-        files.forEach((filename) => {
-          //获取当前文件的绝对路径
-          const filedir = path.join(src, filename);
-          // 继续遍历知道拿到文件为止
-          this.HandleFile(filedir);
-        });
+    // 文件夹
+    if (typeof src == "string" && fs.lstatSync(src).isDirectory()) {
+      // 读取文件夹的下的文件
+      let files = fs.readdirSync(src);
+      files.forEach((filename) => {
+        //获取当前文件的绝对路径
+        const filedir = path.join(src, filename);
+        // 继续遍历知道拿到文件为止
+        this.HandleFile(filedir);
+      });
+    }
+    // 文件
+    if (
+      typeof src == "string" &&
+      this.isValid(src) != -1 &&
+      fs.lstatSync(src).isFile()
+    ) {
+      let order = this.order;
+      switch (order) {
+        case this.UPDATAANDCOPY:
+          this.updataAndCopy(src);
+          break;
+        case this.DELETEFILE:
+          this.deleteFile(src);
+          break;
+        case this.UPDATESUFFIX:
+          this.updataSuffix(src);
+          break;
+        case this.WX2ANTEXECUTE:
+          console.log("测试");
+          this.WX2ANTSTART(src);
+          break;
+        default:
+          console.error("没有该种处理文件的方式");
+          break;
       }
-      if (this.isValid(src) != -1 && fs.lstatSync(src).isFile()) {
-        // 文件
-        let order = this.order;
-        switch (order) {
-          case this.UPDATAANDCOPY:
-            this.updataAndCopy(src);
-            break;
-          case this.DELETEFILE:
-            this.deleteFile(src);
-            break;
-          case this.UPDATESUFFIX:
-            this.updataSuffix(src);
-            break;
-          case this.WX2ANT:
-            this.WX2ANT(src)
-            break;
-          default:
-            console.error("没有该种处理文件的方式");
-            break;
-        }
-
-        // let data = fs.readFileSync('./test.txt', 'utf-8');
-      }
+      // let data = fs.readFileSync('./test.txt', 'utf-8');
     }
   }
 
@@ -123,8 +125,8 @@ export class Wx2Ant {
    */
   deleteFile(f) {
     let index = this.isValid(f);
-    let r = `\.${this.suffix[index]}$`;
-    let reg = new RegExp(r);
+    let rStr = `\.${this.suffix[index]}$`;
+    let reg = new RegExp(rStr);
     let newFilename = f.replace(reg, `.${this.toSuffix[index]}`);
     try {
       fs.unlinkSync(f, newFilename);
@@ -140,8 +142,8 @@ export class Wx2Ant {
    */
   updataAndCopy(f) {
     let index = this.isValid(f);
-    let r = `\.${this.suffix[index]}$`;
-    let reg = new RegExp(r);
+    let rStr = `\.${this.suffix[index]}$`;
+    let reg = new RegExp(rStr);
     let newFilename = f.replace(reg, `.${this.toSuffix[index]}`);
     try {
       fs.copyFileSync(f, newFilename);
@@ -157,8 +159,8 @@ export class Wx2Ant {
    */
   updataSuffix(f) {
     let index = this.isValid(f);
-    let r = `\.${this.suffix[index]}$`;
-    let reg = new RegExp(r);
+    let rStr = `\.${this.suffix[index]}$`;
+    let reg = new RegExp(rStr);
     let newFilename = f.replace(reg, `.${this.toSuffix[index]}`);
     try {
       // 文件重命名
@@ -170,10 +172,19 @@ export class Wx2Ant {
 
   /**
    * 主要逻辑
-   * @param {*} f 
+   * @param {*} f
    */
-  WX2ANT(f) {
-    
+  WX2ANTSTART(f) {
+    console.log(1);
+    // js 转换
+    console.log(f);
+    console.log(f.endsWith(".js"));
+    // if (f.endsWith('.js') {
+
+    // }
+    // axml 转换
+
+    // json 转换
   }
 
   /**
