@@ -1,9 +1,9 @@
 import { Wx2Ant } from "./scr/index";
-import path from "path";
+const path = require("path");
+let configpath = path.resolve(__dirname, "./src/config/index.txt");
 
 const options = {
-
+    configpath
 }
 
 const wx2Ant = new Wx2Ant(options)
-wx2Ant.main()

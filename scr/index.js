@@ -1,21 +1,28 @@
-import { DIR, JSmethod, JS, AXML, JSON } from "./config/index";
+import { DIR } from "./config/index";
 const fs = require("fs");
 const path = require("path");
+const readline = require("linebyline");
+const JSAPR = require("./lib/JSApiPropReplace.js");
 
 export class Wx2Ant {
   constructor(options) {
+    this.rl = "";
+    this.ACSSRegexp = [];
+    this.ACSSToRegexp = [];
     this.suffix = [];
     this.toSuffix = [];
     this.methods = [];
     this.toMethods = [];
     this.JSRegexp = [];
     this.JSToRegexp = [];
+    this.JSApiPropReplace = [];
     this.AXMLRegexp = [];
     this.AXMLToRegexp = [];
     this.JSONRegexp = [];
     this.JSONToRegexp = [];
     this.order = null;
     this.dir = options.dir || DIR;
+
     /**
      * 将符合后缀的文件copy和修改后缀名为指定的后缀。e.g.
      * addUpdateSuffix(".wxml",".axml");将会copy指定目录下所有的.wxml后缀的文件为.axml后缀的文件
@@ -38,7 +45,7 @@ export class Wx2Ant {
      */
     this.WX2ANTEXECUTE = 4;
     // 导入配置
-    this.readConfig();
+    this.readConfig(options);
   }
 
   main() {
@@ -97,7 +104,7 @@ export class Wx2Ant {
           this.updataSuffix(src);
           break;
         case this.WX2ANTEXECUTE:
-          this.WX2ANTSTART(src);
+          this.wx2ant(src);
           break;
         default:
           console.error("没有该种处理文件的方式");
@@ -176,83 +183,101 @@ export class Wx2Ant {
    * 主要逻辑
    * @param {*} f
    */
-  WX2ANTSTART(f) {
+  wx2ant(f) {
     // js 转换
-    if (f.endsWith('.js')) {
-        this.updateJs(f)        
+    if (f.endsWith(".js")) {
+      this.updateJs(f);
     }
     // axml 转换
-    if (f.endsWith('.axml')) {
-        this.updateAxml(f)
+    if (f.endsWith(".axml")) {
+      this.updateAxml(f);
     }
     // json 转换
-    if (f.endsWith('.json')) {
-        this.updateJson(f)
+    if (f.endsWith(".json")) {
+      this.updateJson(f);
+    }
+    // scss 转换
+    if (f.endsWith(".acss")) {
     }
   }
 
   /**
    * 转换json文件
-   * @param {*} f 
+   * @param {*} file
    */
-  updateJson(f) {
+  updateJson(file) {
+    let JSONRegexp = this.JSONRegexp;
+    let JSONToRegexp = this.JSONToRegexp;
     try {
-        const JSONRegexp = this.JSONRegexp
-        const JSONToRegexp = this.JSONToRegexp
-        let s = fs.readFileSync(f, "utf-8");
-        for (let i = 0; i < JSONRegexp.length; i++) {// 修改不一样的方法
-            s = s.replaceAll(new RegExp(JSONRegexp[i], 'gi'), JSONToRegexp[i]);
-        }
-        fs.writeFileSync(f, s, 'utf8')
-        console.log("转换json文件成功：" + f);
-    } catch(e) {
-        console.error("转换json文件出错：" + f, e);
+      let content = fs.readFileSync(file, "utf8");
+      for (let i in JSONRegexp) {
+        // 修改不一样的方法
+        content = content.replace(
+          new RegExp(JSONRegexp[i], "g"),
+          JSONToRegexp[i]
+        );
+      }
+      fs.writeFileSync(file, content);
+      console.log("转换json文件成功：" + file);
+    } catch (e) {
+      console.log(e);
+      console.log("转换json文件出错：" + file);
     }
   }
 
   /**
    * 修改html
-   * @param {*} f 
+   * @param {*} f
    */
-  updateAxml(f) {
+  updateAxml(file) {
+    let AXMLRegexp = this.AXMLRegexp;
+    let AXMLToRegexp = this.AXMLToRegexp;
     try {
-        const AXMLRegexp = this.AXMLRegexp
-        const AXMLToRegexp = this.AXMLToRegexp
-        let s = fs.readFileSync(f, "utf-8");
-        for (let i = 0; i < AXMLRegexp.length; i++) {// 修改不一样的方法
-            s = s.replaceAll(new RegExp(AXMLRegexp[i], 'gi'), AXMLToRegexp[i]);
-        }
-        fs.writeFileSync(f, s, 'utf8')
-        console.log('转换axml文件成功：',f)
-    } catch(e) {
-        console.error("转换html文件出错：" + f, e);
+      let content = fs.readFileSync(file, "utf8");
+      for (let i in AXMLRegexp) {
+        // 修改不一样的方法
+        content = content.replace(
+          new RegExp(AXMLRegexp[i], "g"),
+          AXMLToRegexp[i]
+        );
+      }
+      fs.writeFileSync(file, content);
+      console.log("转换axml文件成功：" + file);
+    } catch (e) {
+      console.log("转换axml文件出错：" + file, e);
     }
   }
 
   /**
    * 修改js
-   * @param {*} f 
+   * @param {*} file
    */
-  updateJs(f) {
-    const methods = this.methods
-    const toMethods = this.toMethods
-    const JSRegexp = this.JSRegexp
-    const JSToRegexp = this.JSToRegexp
+  updateJs(file) {
+    const methods = this.methods;
+    const toMethods = this.toMethods;
+    const JSRegexp = this.JSRegexp;
+    const JSToRegexp = this.JSToRegexp;
     let preffix = "(^|\\W+)wx\\.";
     let toPreffix = "$1my.";
-    let fileData = fs.readFileSync(f, 'utf-8');
     try {
-        for (let i = 0; i < methods.length; i++) {// 修改不一样的方法
-            fileData = fileData.replaceAll(new RegExp(preffix + methods[i], 'gi'), toPreffix + toMethods[i]);
-        }
-        for (let i = 0; i < JSRegexp.length; i++) {// 修改不一样的方法
-            fileData = fileData.replaceAll(new RegExp(JSRegexp[i], 'gi'), JSToRegexp[i]);
-        }
-        fileData = fileData.replaceAll(new RegExp(preffix, 'gi'), toPreffix);// 统一修改未进行方法替换的前缀
-        fs.writeFileSync(f, fileData, 'utf8')
-        console.log('转换js文件成功', f)
-    } catch(e) {
-        console.error("转换js文件出错：" + f, e);
+      let content = fs.readFileSync(file, "utf8");
+      for (let i in methods) {
+        // 修改不一样的方法
+        content = content.replace(
+          new RegExp(preffix + methods[i], "g"),
+          toPreffix + toMethods[i]
+        );
+      }
+      for (let i in JSRegexp) {
+        // 修改不一样的方法
+        content = content.replace(new RegExp(JSRegexp[i], "g"), JSToRegexp[i]);
+      }
+      content = content.replace(new RegExp(preffix, "g"), toPreffix); // 统一修改未进行方法替换的前缀
+      content = JSAPR.replace(content, this.JSApiPropReplace);
+      fs.writeFileSync(file, content);
+      console.log("转换js文件成功", file);
+    } catch (e) {
+      console.error("转换js文件出错：" + file, e);
     }
   }
 
@@ -262,6 +287,14 @@ export class Wx2Ant {
    */
   setOrder(order) {
     this.order = order;
+  }
+
+  /**
+   * 获取当前执行任务
+   * @returns
+   */
+  getOrder() {
+    return this.order;
   }
 
   /**
@@ -314,27 +347,99 @@ export class Wx2Ant {
   }
 
   /**
+   * acss要更新的正则表达式
+   * @param {*} suffix
+   * @param {*} toSuffix
+   */
+  addACSSRegexp(suffix, toSuffix) {
+    this.ACSSRegexp.push(suffix);
+    this.ACSSToRegexp.push(toSuffix);
+  }
+
+  /**
+   * JSApiPropReplace
+   * @param {*} str
+   */
+  addToJSApiPropReplace(str) {
+    let jsaprstate = "";
+    if (str === "PRO:") {
+      jsaprstate = "";
+    } else if (str === "KEYS:") {
+    } else if (str.startsWith("KEYS:") && jsaprstate !== "") {
+      str = str.substring(5).trim();
+      let aTob = str.split("--->");
+      this.JSApiPropReplace[jsaprstate][aTob[0]] = aTob[1];
+    } else if (str.startsWith("PRO:")) {
+      str = str.substring(4).trim();
+      jsaprstate = str;
+      this.JSApiPropReplace[jsaprstate] = {};
+    } else if (jsaprstate === "") {
+      jsaprstate = str;
+      this.JSApiPropReplace[jsaprstate] = {};
+    } else if (jsaprstate !== "") {
+      let aTob = str.split("--->");
+      this.JSApiPropReplace[jsaprstate][aTob[0]] = aTob[1];
+    }
+  }
+
+  /**
    * 初始化
    * @param {*} options
    */
   readConfig(options) {
-    this.dir = DIR;
-    console.log(`工作目录：`, this.dir);
-    JSmethod.forEach((item) => {
-      let aTob = item.split("--->");
-      this.addUpdateMethods(aTob[0], aTob[1]);
-    });
-    JS.forEach((item) => {
-      let aTob = item.split("--->");
-      this.addJSRegexp(aTob[0], aTob[1]);
-    });
-    AXML.forEach((item) => {
-      let aTob = item.split("--->");
-      this.addAXMLRegexp(aTob[0], aTob[1]);
-    });
-    JSON.forEach((item) => {
-      let aTob = item.split("--->");
-      this.addJSONRegexp(aTob[0], aTob[1]);
+    let _this = this;
+    this.dir = options && options.DIR ? options.DIR : DIR;
+
+    let configpath = path.resolve(__dirname, "./config/index.txt");
+    this.rl = readline(configpath);
+    let line = "";
+    let state = "";
+    this.rl.on("line", function (line, lineCount, byteCount) {
+      line = line.replace(/#.*$/g, "").trim();
+      if (state === "") {
+        if ("JSmethod" === line) {
+          state = line;
+        } else if ("JS" === line) {
+          state = line;
+        } else if ("AXML" === line) {
+          state = line;
+        } else if ("ACSS" === line) {
+          state = line;
+        } else if ("DIR" === line) {
+          state = line;
+        } else if ("JSON" === line) {
+          state = line;
+        } else if ("JS_API_PROP_REPLACE" === line) {
+          state = line;
+        } else if ("OVER" === line) {
+          // 结束
+          _this.main();
+        }
+      } else if ("end" === line) {
+        state = "";
+      } else if ("JSmethod" === state) {
+        let aTob = line.split("--->");
+        _this.addUpdateMethods(aTob[0], aTob[1]);
+      } else if ("JS" === state) {
+        let aTob = line.split("--->");
+        _this.addJSRegexp(aTob[0], aTob[1]);
+      } else if ("AXML" === state) {
+        let aTob = line.split("--->");
+        _this.addAXMLRegexp(aTob[0], aTob[1]);
+      } else if ("ACSS" === state) {
+        let aTob = line.split("--->");
+        _this.addACSSRegexp(aTob[0], aTob[1]);
+      } else if ("JSON" === state) {
+        let aTob = line.split("--->");
+        _this.addJSONRegexp(aTob[0], aTob[1]);
+      } else if ("JS_API_PROP_REPLACE" === state) {
+        _this.addToJSApiPropReplace(line);
+      } else if ("DIR" === state) {
+        console.log(`工作目录：`, _this.dir);
+      } else if ("OVER" === line) {
+        // 结束
+        console.log(_this);
+      }
     });
   }
 }
