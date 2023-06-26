@@ -48,8 +48,7 @@ module.exports.replace = function (content, config) {
     contentArray.push(head);
     return contentArray.join("");
   } catch (exception) {
-    console.log("Parse Error: " + exception.stack);
-    //   console.log(content)
+    console.error("Parse Error: " + exception.stack);
     return content;
   }
 };
