@@ -103,7 +103,6 @@ export class Wx2Ant {
           console.error("没有该种处理文件的方式");
           break;
       }
-      // let data = fs.readFileSync('./test.txt', 'utf-8');
     }
   }
 
@@ -179,14 +178,38 @@ export class Wx2Ant {
    */
   WX2ANTSTART(f) {
     // js 转换
-    console.log(f);
-    console.log(f.endsWith(".js"));
-    // if (f.endsWith('.js') {
-
-    // }
+    if (f.endsWith('.js')) {
+        this.updateJs(f)        
+    }
     // axml 转换
 
     // json 转换
+  }
+
+  /**
+   * 修改js
+   * @param {*} f 
+   */
+  updateJs(f) {
+    const methods = this.methods
+    const toMethods = this.toMethods
+    const JSRegexp = this.JSRegexp
+    const JSToRegexp = this.JSToRegexp
+    let preffix = "wx.";
+    let toPreffix = "my.";
+    let fileData = fs.readFileSync(f, 'utf-8');
+    try {
+        for (let i = 0; i < methods.length; i++) {// 修改不一样的方法
+            fileData = fileData.replaceAll(preffix + methods[i], toPreffix + toMethods[i]);
+        }
+        for (let i = 0; i < JSRegexp.length; i++) {// 修改不一样的方法
+            fileData = fileData.replaceAll(JSRegexp[i], JSToRegexp[i]);
+        }
+        fileData = fileData.replaceAll(preffix, toPreffix);// 统一修改未进行方法替换的前缀
+        console.log(fileData)
+    } catch(e) {
+        console.error("转换js文件出错：" + f, e);
+    }
   }
 
   /**
