@@ -6,4 +6,4 @@ const options = {
     configpath
 }
 
-const wx2Ant = new Wx2Ant(options)
+new Wx2Ant(options)
