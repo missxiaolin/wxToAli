@@ -198,13 +198,12 @@ export class Wx2Ant {
         const AXMLToRegexp = this.AXMLToRegexp
         let s = fs.readFileSync(f, "utf-8");
         for (let i = 0; i < AXMLRegexp.length; i++) {// 修改不一样的方法
-            // console.log(AXMLRegexp[i])
-            // console.log(AXMLToRegexp[i])
-            // s = s.replaceAll(AXMLRegexp[i], AXMLToRegexp[i]);
+            console.log(new RegExp(AXMLRegexp[i], 'gi'), AXMLToRegexp[i])
+            s = s.replaceAll(new RegExp(AXMLRegexp[i], 'gi'), AXMLToRegexp[i]);
         }
-        // console.log(s)
-        // FileUtils.writeStringToFile(f, s, "utf-8");
-        // System.out.println("转换axml文件：" + f.getAbsolutePath());
+        console.log(s)
+        fs.writeFileSync(f, s, 'utf8')
+        console.log('转换axml文件成功：',f)
     } catch(e) {
         console.error("转换html文件出错：" + f, e);
     }
@@ -224,14 +223,14 @@ export class Wx2Ant {
     let fileData = fs.readFileSync(f, 'utf-8');
     try {
         for (let i = 0; i < methods.length; i++) {// 修改不一样的方法
-            fileData = fileData.replaceAll(new RegExp(preffix + methods[i], 'g'), toPreffix + toMethods[i]);
+            fileData = fileData.replaceAll(new RegExp(preffix + methods[i], 'gi'), toPreffix + toMethods[i]);
         }
         for (let i = 0; i < JSRegexp.length; i++) {// 修改不一样的方法
-            fileData = fileData.replaceAll(new RegExp(JSRegexp[i], 'g'), JSToRegexp[i]);
+            fileData = fileData.replaceAll(new RegExp(JSRegexp[i], 'gi'), JSToRegexp[i]);
         }
-        fileData = fileData.replaceAll(new RegExp(preffix, 'g'), toPreffix);// 统一修改未进行方法替换的前缀
-        console.log(fileData)
+        fileData = fileData.replaceAll(new RegExp(preffix, 'gi'), toPreffix);// 统一修改未进行方法替换的前缀
         fs.writeFileSync(f, fileData, 'utf8')
+        console.log('转换js文件成功', f)
     } catch(e) {
         console.error("转换js文件出错：" + f, e);
     }

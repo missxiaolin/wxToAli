@@ -20,38 +20,38 @@ const JSmethod = [
 
 // js中的函数参数的替换
 const JS = [
-    'getStorageSync\(\s*(\S+)\s*\)--->getStorageSync({key:$1})',
-	'setStorageSync\(\s*(\S+)\s*\,\s*(\S+)\s*\)--->setStorageSync({key:$1,data:$2})',
-	'removeStorageSync\(\s*(\S+)\s*\)--->removeStorageSync({key:$1})',
-	'vibrateLong\(\s*?\{[\w\W]*?\}\s*?\)--->vibrate()',
-	'vibrateShort\(\s*?\{[\w\W]*?\}\s*?\)--->vibrate()',
-	'(\S+)\s*:\s*function--->$1', // es6的对象方法样式
+    'getStorageSync\\(\\s*(\\S+)\\s*\\)--->getStorageSync({key:$1})',
+	'setStorageSync\\(\\s*(\\S+)\s*\\,\\s*(\\S+)\\s*\\)--->setStorageSync({key:$1,data:$2})',
+	'removeStorageSync\\(\\s*(\\S+)\\s*\\)--->removeStorageSync({key:$1})',
+	'vibrateLong\\(\\s*?\\{[\\w\\W]*?\\}\s*?\\)--->vibrate()',
+	'vibrateShort\\(\\s*?\\{[\\w\\W]*?\\}\\s*?\\)--->vibrate()',
+	'(\\S+)\\s*:\\s*function--->$1', // es6的对象方法样式
 ]
 
 // axml中的内容替换
 const AXML = [
-    '(^||\s+)wx:--->$1a:',
-	'(^||\s+)bindtap(\W+)--->$1onTap$2',
-	'(^||\s+)bindlongTap(\W+)--->$1onLongTap$2',
-	'(^||\s+)bindinput(\W+)--->$1onInput$2',
-	'(^||\s+)bindchange(\W+)--->$1onChange$2',
-	'(^||\s+)bindinput(\W+)--->$1onInput$2',
-	'(^||\s+)bindfocus(\W+)--->$1onFocus$2',
-	'(^||\s+)bindblur(\W+)--->$1onBlur$2',
-	'(^||\s+)bindconfirm(\W+)--->$1onConfirm$2',
-	'(^||\s+)bindsubmit(\W+)--->$1onSubmit$2',
-	'(^||\s+)bindreset(\W+)--->$1onReset$2',
-	'(^||\s+)bindtouchstart(\W+)--->$1onTouchStart$2',
-	'(^||\s+)bindtouchmove(\W+)--->$1onTouchMove$2',
-	'(^||\s+)bindtouchend(\W+)--->$1onTouchEnd$2',
-	'(^||\s+)bindtouchcancel(\W+)--->$1onTouchCancel$2',
-	'(^||\s+)bindlongtap(\W+)--->$1onLongTap$2',
-	'(^||\s+)bindmarkertap(\W+)--->$1onMarkerTap$2',
-	'(^||\s+)bindcallouttap(\W+)--->$1onCalloutTap$2',
-	'(^||\s+)bindcontroltap(\W+)--->$1onControlTap$2',
-	'(^||\s+)bindregionchange(\W+)--->$1onRegionChange$2',
-	'(^||\s+)canvas-id(\W+)--->$1id$2',
-	'(^||\s+)bind(\w+)(\W+)--->$1on$2$3'
+    '(^||\\s+)wx:--->$1a:',
+    '(^||\\s+)bindtap(\\W+)--->$1onTap$2',
+	'(^||\\s+)bindlongTap(\\W+)--->$1onLongTap$2',
+	'(^||\\s+)bindinput(\\W+)--->$1onInput$2',
+	'(^||\\s+)bindchange(\\W+)--->$1onChange$2',
+	'(^||\\s+)bindinput(\\W+)--->$1onInput$2',
+	'(^||\\s+)bindfocus(\\W+)--->$1onFocus$2',
+	'(^||\\s+)bindblur(\\W+)--->$1onBlur$2',
+	'(^||\\s+)bindconfirm(\\W+)--->$1onConfirm$2',
+	'(^||\\s+)bindsubmit(\\W+)--->$1onSubmit$2',
+	'(^||\\s+)bindreset(\\W+)--->$1onReset$2',
+	'(^||\\s+)bindtouchstart(\\W+)--->$1onTouchStart$2',
+	'(^||\\s+)bindtouchmove(\\W+)--->$1onTouchMove$2',
+	'(^||\\s+)bindtouchend(\\W+)--->$1onTouchEnd$2',
+	'(^||\\s+)bindtouchcancel(\\W+)--->$1onTouchCancel$2',
+	'(^||\\s+)bindlongtap(\\W+)--->$1onLongTap$2',
+	'(^||\\s+)bindmarkertap(\\W+)--->$1onMarkerTap$2',
+	'(^||\\s+)bindcallouttap(\\W+)--->$1onCalloutTap$2',
+	'(^||\\s+)bindcontroltap(\\W+)--->$1onControlTap$2',
+	'(^||\\s+)bindregionchange(\\W+)--->$1onRegionChange$2',
+	'(^||\\s+)canvas-id(\\W+)--->$1id$2',
+	'(^||\\s+)bind(\\w+)(\\W+)--->$1on$2$3'
 ]
 
 // json中的内容替换
