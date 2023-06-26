@@ -25,7 +25,7 @@ const JS = [
 	'removeStorageSync\(\s*(\S+)\s*\)--->removeStorageSync({key:$1})',
 	'vibrateLong\(\s*?\{[\w\W]*?\}\s*?\)--->vibrate()',
 	'vibrateShort\(\s*?\{[\w\W]*?\}\s*?\)--->vibrate()',
-	'(\S+)\s*:\s*function--->$1 #es6的对象方法样式',
+	'(\S+)\s*:\s*function--->$1', // es6的对象方法样式
 ]
 
 // axml中的内容替换

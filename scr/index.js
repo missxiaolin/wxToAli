@@ -182,8 +182,22 @@ export class Wx2Ant {
         this.updateJs(f)        
     }
     // axml 转换
+    if (f.endsWith('.axml')) {
 
+    }
     // json 转换
+  }
+
+  /**
+   * 修改html
+   * @param {*} f 
+   */
+  updateAxml(f) {
+    try {
+
+    } catch(e) {
+        console.error("转换html文件出错：" + f, e);
+    }
   }
 
   /**
@@ -206,7 +220,7 @@ export class Wx2Ant {
             fileData = fileData.replaceAll(JSRegexp[i], JSToRegexp[i]);
         }
         fileData = fileData.replaceAll(preffix, toPreffix);// 统一修改未进行方法替换的前缀
-        console.log(fileData)
+        fs.writeFileSync(f, fileData, 'utf8')
     } catch(e) {
         console.error("转换js文件出错：" + f, e);
     }
