@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const readline = require("linebyline");
 const JSAPR = require("./lib/JSApiPropReplace.js");
-
+let jsaprstate = "";
 export class Wx2Ant {
   constructor(options) {
     this.rl = "";
@@ -381,14 +381,17 @@ export class Wx2Ant {
    * @param {*} str
    */
   addToJSApiPropReplace(str) {
-    let jsaprstate = "";
+    
     if (str === "PRO:") {
       jsaprstate = "";
     } else if (str === "KEYS:") {
     } else if (str.startsWith("KEYS:") && jsaprstate !== "") {
       str = str.substring(5).trim();
       let aTob = str.split("--->");
-      this.JSApiPropReplace[jsaprstate][aTob[0]] = aTob[1];
+      if (aTob[0]) {
+        this.JSApiPropReplace[jsaprstate][aTob[0]] = aTob[1];
+      }
+      
     } else if (str.startsWith("PRO:")) {
       str = str.substring(4).trim();
       jsaprstate = str;
@@ -398,7 +401,9 @@ export class Wx2Ant {
       this.JSApiPropReplace[jsaprstate] = {};
     } else if (jsaprstate !== "") {
       let aTob = str.split("--->");
-      this.JSApiPropReplace[jsaprstate][aTob[0]] = aTob[1];
+      if (aTob[0]) {
+        this.JSApiPropReplace[jsaprstate][aTob[0]] = aTob[1];
+      }
     }
   }
 
