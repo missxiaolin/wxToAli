@@ -39,6 +39,9 @@ export class Wx2Ant {
     this.WX2ANTEXECUTE = 4;
     // 导入配置
     this.readConfig();
+  }
+
+  main() {
     this.addUpdateSuffix("wxml", "axml"); // 这边的order是UPDATESUFFIX 所以是修改后缀名
     this.addUpdateSuffix("wxss", "acss"); // wxss->acss
     this.setOrder(this.UPDATESUFFIX);
@@ -47,6 +50,7 @@ export class Wx2Ant {
     this.addUpdateSuffix(".axml", "");
     this.addUpdateSuffix(".acss", "");
     this.addUpdateSuffix(".json", "");
+    this.addUpdateSuffix(".js", "");
     // 动作
     this.setOrder(this.WX2ANTEXECUTE);
     this.HandleFile(this.dir);
@@ -93,7 +97,6 @@ export class Wx2Ant {
           this.updataSuffix(src);
           break;
         case this.WX2ANTEXECUTE:
-          console.log("测试");
           this.WX2ANTSTART(src);
           break;
         default:
@@ -112,7 +115,7 @@ export class Wx2Ant {
   isValid(f) {
     let suffix = this.suffix;
     for (let i = 0; i < suffix.length; i++) {
-      if (f.indexOf(`.${suffix[i]}`) != -1) {
+      if (f.endsWith(suffix[i])) {
         return i;
       }
     }
@@ -175,7 +178,6 @@ export class Wx2Ant {
    * @param {*} f
    */
   WX2ANTSTART(f) {
-    console.log(1);
     // js 转换
     console.log(f);
     console.log(f.endsWith(".js"));

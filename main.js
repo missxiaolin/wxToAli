@@ -6,3 +6,4 @@ const options = {
 }
 
 const wx2Ant = new Wx2Ant(options)
+wx2Ant.main()
