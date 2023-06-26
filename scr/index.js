@@ -223,19 +223,15 @@ export class Wx2Ant {
     let toPreffix = "$1my.";
     let fileData = fs.readFileSync(f, 'utf-8');
     try {
-        // for (let i = 0; i < methods.length; i++) {// 修改不一样的方法
-        //     let rStr = preffix + methods[i]
-        //     let r = new RegExp(rStr)
-        //     fileData = fileData.replaceAll(r, toPreffix + toMethods[i]);
-        // }
-        // for (let i = 0; i < JSRegexp.length; i++) {// 修改不一样的方法
-        //     let rStr = JSRegexp[i]
-        //     let r = new RegExp(rStr)
-        //     fileData = fileData.replaceAll(r, JSToRegexp[i]);
-        // }
+        for (let i = 0; i < methods.length; i++) {// 修改不一样的方法
+            fileData = fileData.replaceAll(new RegExp(preffix + methods[i], 'g'), toPreffix + toMethods[i]);
+        }
+        for (let i = 0; i < JSRegexp.length; i++) {// 修改不一样的方法
+            fileData = fileData.replaceAll(new RegExp(JSRegexp[i], 'g'), JSToRegexp[i]);
+        }
         fileData = fileData.replaceAll(new RegExp(preffix, 'g'), toPreffix);// 统一修改未进行方法替换的前缀
         console.log(fileData)
-        // fs.writeFileSync(f, fileData, 'utf8')
+        fs.writeFileSync(f, fileData, 'utf8')
     } catch(e) {
         console.error("转换js文件出错：" + f, e);
     }
