@@ -19,5 +19,13 @@ Page({
         })
     },
     onShow: function() {
-    }
+    },
+    toast(title, duration=2000) {//toast 提示
+        wx.showToast({
+            title,
+            icon: 'none',
+            mask: true,
+            duration
+        })
+    },
 })
