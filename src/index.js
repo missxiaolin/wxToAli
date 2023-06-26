@@ -411,7 +411,7 @@ export class Wx2Ant {
     this.dir = options && options.DIR ? options.DIR : DIR;
 
     let configpath = path.resolve(__dirname, "./config/index.txt");
-    this.rl = readline(configpath);
+    this.rl = readline(options.configpath || configpath);
     let line = "";
     let state = "";
     this.rl.on("line", function (line, lineCount, byteCount) {
