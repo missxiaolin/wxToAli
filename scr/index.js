@@ -198,6 +198,27 @@ export class Wx2Ant {
     }
     // scss 转换
     if (f.endsWith(".acss")) {
+      this.updateAcss(f);
+    }
+  }
+
+  /**
+   * 转换acss
+   * @param {*} file 
+   */
+  updateAcss(file) {
+    let ACSSRegexp = this.ACSSRegexp;
+    let ACSSToRegexp = this.ACSSToRegexp;
+    try {
+        let content = fs.readFileSync(file, "utf8");
+        for (let i in ACSSRegexp) {// 修改不一样的方法
+            content = content.replace(new RegExp(ACSSRegexp[i], "g"), ACSSToRegexp[i]);
+        }
+        fs.writeFileSync(file, content);
+        console.log("转换acss文件成功：" + file);
+    } catch (e) {
+        console.log(e)
+        console.log("转换acss文件出错：" + file);
     }
   }
 
@@ -220,7 +241,6 @@ export class Wx2Ant {
       fs.writeFileSync(file, content);
       console.log("转换json文件成功：" + file);
     } catch (e) {
-      console.log(e);
       console.log("转换json文件出错：" + file);
     }
   }
