@@ -183,7 +183,7 @@ export class Wx2Ant {
     }
     // axml 转换
     if (f.endsWith('.axml')) {
-
+        this.updateAxml(f)
     }
     // json 转换
   }
@@ -194,7 +194,17 @@ export class Wx2Ant {
    */
   updateAxml(f) {
     try {
-
+        const AXMLRegexp = this.AXMLRegexp
+        const AXMLToRegexp = this.AXMLToRegexp
+        let s = fs.readFileSync(f, "utf-8");
+        for (let i = 0; i < AXMLRegexp.length; i++) {// 修改不一样的方法
+            // console.log(AXMLRegexp[i])
+            // console.log(AXMLToRegexp[i])
+            // s = s.replaceAll(AXMLRegexp[i], AXMLToRegexp[i]);
+        }
+        // console.log(s)
+        // FileUtils.writeStringToFile(f, s, "utf-8");
+        // System.out.println("转换axml文件：" + f.getAbsolutePath());
     } catch(e) {
         console.error("转换html文件出错：" + f, e);
     }
@@ -209,18 +219,23 @@ export class Wx2Ant {
     const toMethods = this.toMethods
     const JSRegexp = this.JSRegexp
     const JSToRegexp = this.JSToRegexp
-    let preffix = "wx.";
-    let toPreffix = "my.";
+    let preffix = "(^|\\W+)wx\\.";
+    let toPreffix = "$1my.";
     let fileData = fs.readFileSync(f, 'utf-8');
     try {
-        for (let i = 0; i < methods.length; i++) {// 修改不一样的方法
-            fileData = fileData.replaceAll(preffix + methods[i], toPreffix + toMethods[i]);
-        }
-        for (let i = 0; i < JSRegexp.length; i++) {// 修改不一样的方法
-            fileData = fileData.replaceAll(JSRegexp[i], JSToRegexp[i]);
-        }
-        fileData = fileData.replaceAll(preffix, toPreffix);// 统一修改未进行方法替换的前缀
-        fs.writeFileSync(f, fileData, 'utf8')
+        // for (let i = 0; i < methods.length; i++) {// 修改不一样的方法
+        //     let rStr = preffix + methods[i]
+        //     let r = new RegExp(rStr)
+        //     fileData = fileData.replaceAll(r, toPreffix + toMethods[i]);
+        // }
+        // for (let i = 0; i < JSRegexp.length; i++) {// 修改不一样的方法
+        //     let rStr = JSRegexp[i]
+        //     let r = new RegExp(rStr)
+        //     fileData = fileData.replaceAll(r, JSToRegexp[i]);
+        // }
+        fileData = fileData.replaceAll(new RegExp(preffix, 'g'), toPreffix);// 统一修改未进行方法替换的前缀
+        console.log(fileData)
+        // fs.writeFileSync(f, fileData, 'utf8')
     } catch(e) {
         console.error("转换js文件出错：" + f, e);
     }
