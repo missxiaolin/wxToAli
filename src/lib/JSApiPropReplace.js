@@ -1,11 +1,12 @@
-let babel = require("babel-core");
+// let babel = require("babel-core");
 let traverse = require("ast-traverse");
-let fs = require("fs");
+// let fs = require("fs");
 let path = require("path");
-let pluginpath = path.resolve(
-  __dirname,
-  "../../node_modules/babel-plugin-transform-object-rest-spread"
-);
+// let pluginpath = path.resolve(
+//   __dirname,
+//   "../../node_modules/babel-plugin-transform-object-rest-spread"
+// );
+import * as parser from "@babel/parser";
 
 module.exports.replace = function (content, config) {
   let ast;
@@ -13,10 +14,11 @@ module.exports.replace = function (content, config) {
   let end = 0;
   let contentArray = [];
   try {
-    ast = babel.transform(content, {
-      plugins: [pluginpath],
-    });
-    traverse(ast.ast, {
+    // ast = babel.transform(content, {
+    //   plugins: [pluginpath],
+    // });
+    ast = parser.parse(content);
+    traverse(ast, {
       pre: function (node, parent, prop, idx) {
         if (
           node.type === "CallExpression" &&
