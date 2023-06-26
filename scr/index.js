@@ -186,6 +186,28 @@ export class Wx2Ant {
         this.updateAxml(f)
     }
     // json 转换
+    if (f.endsWith('.json')) {
+        this.updateJson(f)
+    }
+  }
+
+  /**
+   * 转换json文件
+   * @param {*} f 
+   */
+  updateJson(f) {
+    try {
+        const JSONRegexp = this.JSONRegexp
+        const JSONToRegexp = this.JSONToRegexp
+        let s = fs.readFileSync(f, "utf-8");
+        for (let i = 0; i < JSONRegexp.length; i++) {// 修改不一样的方法
+            s = s.replaceAll(new RegExp(JSONRegexp[i], 'gi'), JSONToRegexp[i]);
+        }
+        fs.writeFileSync(f, s, 'utf8')
+        console.log("转换json文件成功：" + f);
+    } catch(e) {
+        console.error("转换json文件出错：" + f, e);
+    }
   }
 
   /**
@@ -198,10 +220,8 @@ export class Wx2Ant {
         const AXMLToRegexp = this.AXMLToRegexp
         let s = fs.readFileSync(f, "utf-8");
         for (let i = 0; i < AXMLRegexp.length; i++) {// 修改不一样的方法
-            console.log(new RegExp(AXMLRegexp[i], 'gi'), AXMLToRegexp[i])
             s = s.replaceAll(new RegExp(AXMLRegexp[i], 'gi'), AXMLToRegexp[i]);
         }
-        console.log(s)
         fs.writeFileSync(f, s, 'utf8')
         console.log('转换axml文件成功：',f)
     } catch(e) {

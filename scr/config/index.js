@@ -56,16 +56,16 @@ const AXML = [
 
 // json中的内容替换
 const JSON = [
-    '(^||\s+\W)navigationBarTextStyle(\W)--->$1titleBarColor$2',
-	'(^||\s+\W)navigationBarTitleText(\W)--->$1defaultTitle$2',
-	'(^||\s+\W)enablePullDownRefresh(\W)--->$1pullRefresh$2',
-	'(^||\s+\W)disableScroll(\W)--->$1allowsBounceVertical$2',
-	'(^||\s+\W)color(\W)--->$1textColor$2',
-	'(^||\s+\W)list(\W)--->$1items$2',
-	'(^||\s+\W)text(\W)--->$1name$2',
-	'(^||\s+\W)iconPath(\W)--->$1icon$2',
-	'(^||\s+\W)iconPath(\W)--->$1icon$2',
-	'(^||\s+\W)selectedIconPath(\W)--->$1activeIcon$2'
+    '(^||\\s+\\W)navigationBarTextStyle(\\W)--->$1titleBarColor$2',
+	'(^||\\s+\\W)navigationBarTitleText(\\W)--->$1defaultTitle$2',
+	'(^||\\s+\\W)enablePullDownRefresh(\\W)--->$1pullRefresh$2',
+	'(^||\\s+\\W)disableScroll(\\W)--->$1allowsBounceVertical$2',
+	'(^||\\s+\\W)color(\\W)--->$1textColor$2',
+	'(^||\\s+\\W)list(\\W)--->$1items$2',
+	'(^||\\s+\\W)text(\\W)--->$1name$2',
+	'(^||\\s+\\W)iconPath(\\W)--->$1icon$2',
+	'(^||\\s+\\W)iconPath(\\W)--->$1icon$2',
+	'(^||\\s+\\W)selectedIconPath(\\W)--->$1activeIcon$2'
 ]
 
 export {
