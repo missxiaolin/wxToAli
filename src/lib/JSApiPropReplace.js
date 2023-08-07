@@ -1,5 +1,6 @@
 // let babel = require("babel-core");
 let traverse = require("ast-traverse");
+// import traverse from '@babel/traverse'
 // let fs = require("fs");
 let path = require("path");
 // import traverse from "@babel/traverse"
