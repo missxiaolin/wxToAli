@@ -1,3 +1,6 @@
+import {
+    Request
+} from './util.js';
 var app = getApp();
 
 Page({
