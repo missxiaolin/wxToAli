@@ -2,6 +2,7 @@
 let traverse = require("ast-traverse");
 // let fs = require("fs");
 let path = require("path");
+// import traverse from "@babel/traverse"
 // let pluginpath = path.resolve(
 //   __dirname,
 //   "../../node_modules/babel-plugin-transform-object-rest-spread"
@@ -17,7 +18,7 @@ module.exports.replace = function (content, config) {
     // ast = babel.transform(content, {
     //   plugins: [pluginpath],
     // });
-    ast = parser.parse(content);
+    ast = parser.parse(content, { sourceType: 'module' });
     traverse(ast, {
       pre: function (node, parent, prop, idx) {
         if (
